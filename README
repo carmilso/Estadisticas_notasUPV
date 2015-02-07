@@ -1,0 +1,10 @@
+Cálculo de estadísticas de un examen.
+Los nombres se han sustituído por "xxxxxxxxxxx"
+
+
+Uso: python estadisticas.py <documento> <notaMáxima> [notaPersonal]
+
+Donde:
+	documento -> fichero html con las notas (ej: bda_est).
+	notaMáxima -> cuál es la nota máxima posible del examen (ej: 10).
+	notaPersonal -> nota propia para comparar con el resto.
