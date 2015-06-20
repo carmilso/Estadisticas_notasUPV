@@ -10,31 +10,31 @@ if len(sys.argv) < 3:
     print "\nUso: ./estadisticas.py <documento> <notaMáxima> [notaPersonal]\n"
     sys.exit(1)
 
-if len(sys.argv) == 4: notaP = True
+if len(sys.argv) == 4:
+    notaP = True
+    notaPersonal = float(sys.argv[3])
 else: notaP = False
 
 f = string.replace(open(sys.argv[1], 'r').read(), ',', '.')
 
-lista = [e.replace("<","").replace(">","") \
-                for e in re.findall(">.[0-9]<", f)+\
-                         re.findall(">.[0-9][0-9]<", f) +\
-                         re.findall(">[0-9].[0-9]<", f) +\
-                         re.findall(">[0-9].[0-9][0-9]<", f) +\
-                         re.findall(">[0-9]<", f) +\
-                         re.findall(">10<", f)]
+lista = re.findall(r'<td class="alignleft">(\d*.*\d+)</td', f)
 
+presentados = len(lista)
+notaMaxima = float(sys.argv[2])
 
-presentados, aprobados, suspendidos, notas, notaMax, notaMin = 0, 0, 0, 0, 0, 10
-mayorIgual = 0
+aprobados, suspendidos, notas, notaMin, notaMax = 0, 0, 0, 10, 0
+mayorIgual = -1
 
 for e in lista:
-    presentados += 1
     notas += float(e)
-    if float(e) >= float(sys.argv[2]) / 2: aprobados += 1
+
+    if float(e) >= notaMaxima / 2: aprobados += 1
     else: suspendidos += 1
-    if float(e) > float(notaMax): notaMax = e
-    elif float(e) < float(notaMin): notaMin = e
-    if notaP and float(e) >= float(sys.argv[3]): mayorIgual += 1
+
+    if float(e) > notaMax: notaMax = e
+    elif float(e) < notaMin: notaMin = e
+
+    if notaP and float(e) >= notaPersonal: mayorIgual += 1
 
 media = notas / presentados
 
