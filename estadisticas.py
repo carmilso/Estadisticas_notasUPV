@@ -5,22 +5,27 @@
 import re
 import sys
 import string
+import argparse
 
-if len(sys.argv) < 3:
-    print "\nUso: ./estadisticas.py <documento> <notaMáxima> [notaPersonal]\n"
-    sys.exit(1)
+parser = argparse.ArgumentParser(description='Estadísticas de notas.')
 
-if len(sys.argv) == 4:
-    notaP = True
-    notaPersonal = float(sys.argv[3])
+parser.add_argument('-d', '--doc', required=True,
+    help='Ruta del documento de notas')
+parser.add_argument('-m', '--notaMaxima', required=True,
+    help='Nota máxima posible', type=float)
+parser.add_argument('-p', '--notaPersonal', required=False,
+    help='Nota personal', type=float)
+
+args = vars(parser.parse_args())
+
+if args['notaPersonal'] != None: notaP = True
 else: notaP = False
 
-f = string.replace(open(sys.argv[1], 'r').read(), ',', '.')
+f = string.replace(open(args['doc'], 'r').read(), ',', '.')
 
 lista = re.findall(r'<td class="alignleft">(\d*.*\d+)</td', f)
 
 presentados = len(lista)
-notaMaxima = float(sys.argv[2])
 
 aprobados, suspendidos, notas, notaMin, notaMax = 0, 0, 0, 10, 0
 mayorIgual = -1
@@ -28,13 +33,13 @@ mayorIgual = -1
 for e in lista:
     notas += float(e)
 
-    if float(e) >= notaMaxima / 2: aprobados += 1
+    if float(e) >= args['notaMaxima'] / 2: aprobados += 1
     else: suspendidos += 1
 
-    if float(e) > notaMax: notaMax = e
-    elif float(e) < notaMin: notaMin = e
+    if float(e) > notaMax: notaMax = float(e)
+    elif float(e) < notaMin: notaMin = float(e)
 
-    if notaP and float(e) >= notaPersonal: mayorIgual += 1
+    if notaP and float(e) >= args['notaPersonal']: mayorIgual += 1
 
 media = notas / presentados
 
